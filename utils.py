@@ -31,6 +31,21 @@ def wrap_exceptions(excs: dict, *, base_exception=Exception):
     Traceback (most recent call last):
         ...
     SpecificError
+    
+    >>> wrap_mongo_exceptions = wrap_exceptions({
+    ...     ServerSelectionTimeoutError:
+    ...         MongoNotRunningException('Suppose running mongod'),
+    ... })
+    
+    >>> @wrap_mongo_exceptions
+    ... def mongo_foo():
+    ...     raise ServerSelectionTimeoutError()
+    
+    >>> mongo_foo()
+    Traceback (most recent call last):
+        ...
+    MongoNotRunningException: Suppose running mongod
+    
     """
     def inner_wrapper(func):
 
